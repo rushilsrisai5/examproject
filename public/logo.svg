@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" fill="none">
+  <!-- ExamNova Official Tech Logo Mark -->
+  <defs>
+    <linearGradient id="examNovaCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00C2FF" />
+      <stop offset="100%" stop-color="#22D3EE" />
+    </linearGradient>
+  </defs>
+
+  <!-- Top Cyan Crossbar (Parallelogram) -->
+  <polygon
+    points="248,272 324,272 344,232 268,232"
+    fill="url(#examNovaCyan)"
+  />
+
+  <!-- Bottom Cyan Crossbar (Parallelogram) -->
+  <polygon
+    points="222,324 340,324 360,284 242,284"
+    fill="url(#examNovaCyan)"
+  />
+
+  <!-- Top Navy Circuit Arm & Node -->
+  <!-- Top Node -->
+  <circle cx="410" cy="180" r="14" fill="#07173D" />
+
+  <!-- Outer Top Line -->
+  <path
+    d="M 195 310 L 115 310 L 105 295 L 195 295 L 255 180 L 410 180"
+    fill="none"
+    stroke="#07173D"
+    stroke-width="10"
+    stroke-linecap="round"
+    stroke-linejoin="miter"
+    stroke-miterlimit="4"
+  />
+
+  <!-- Inner Top Parallel Navy Bar -->
+  <path
+    d="M 115 310 L 195 310 L 260 198 L 398 198 L 390 216 L 270 216 L 210 324 L 90 324"
+    fill="none"
+    stroke="#07173D"
+    stroke-width="9"
+    stroke-linejoin="miter"
+    stroke-miterlimit="4"
+  />
+
+  <!-- Middle Horizontal Navy Divider Bar -->
+  <polygon
+    points="242,246 342,246 334,260 234,260"
+    fill="#07173D"
+  />
+
+  <!-- Bottom Baseline Navy Arm & Node -->
+  <!-- Bottom Node -->
+  <circle cx="90" cy="324" r="14" fill="#07173D" />
+
+  <!-- Bottom Base Track -->
+  <path
+    d="M 90 324 L 340 324"
+    stroke="#07173D"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+</svg>

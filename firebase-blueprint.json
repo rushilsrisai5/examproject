@@ -1,0 +1,192 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role-based access for examination management",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email", "description": "User university email address" },
+        "fullName": { "type": "string", "description": "User full display name" },
+        "role": { "type": "string", "enum": ["admin", "incharge", "student"], "description": "Assigned institutional role" },
+        "regNo": { "type": "string", "description": "Candidate registration or roll number" },
+        "department": { "type": "string", "description": "Academic department" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when user was created" }
+      },
+      "required": ["email", "fullName", "role", "createdAt"]
+    },
+    "Department": {
+      "title": "Department",
+      "description": "Academic department entity",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Department name" },
+        "code": { "type": "string", "description": "Department abbreviation code" }
+      },
+      "required": ["name", "code"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "Curriculum course paper entity",
+      "type": "object",
+      "properties": {
+        "courseCode": { "type": "string", "description": "Course code" },
+        "courseName": { "type": "string", "description": "Course title" },
+        "department": { "type": "string", "description": "Department" },
+        "semester": { "type": "number", "description": "Semester number" }
+      },
+      "required": ["courseCode", "courseName", "department"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Candidate student record",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "description": "Student full name" },
+        "email": { "type": "string", "format": "email", "description": "Student institutional email" },
+        "regNo": { "type": "string", "description": "Roll or registration number" },
+        "department": { "type": "string", "description": "Enrolled department" },
+        "section": { "type": "string", "description": "Academic section (e.g. Sec-A)" },
+        "semester": { "type": "number", "description": "Current semester" }
+      },
+      "required": ["fullName", "email", "regNo", "department"]
+    },
+    "Examination": {
+      "title": "Examination",
+      "description": "Institutional examination paper schedule",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Title of the examination paper" },
+        "courseCode": { "type": "string", "description": "Course code" },
+        "courseName": { "type": "string", "description": "Full name of the course" },
+        "examDate": { "type": "string", "description": "Scheduled examination date (YYYY-MM-DD)" },
+        "session": { "type": "string", "enum": ["Morning (09:30 AM - 12:30 PM)", "Afternoon (02:00 PM - 05:00 PM)"], "description": "Session timing slot" },
+        "department": { "type": "string", "description": "Department offering the course" },
+        "semester": { "type": "number", "description": "Academic semester" },
+        "status": { "type": "string", "enum": ["Scheduled", "In Progress", "Completed"], "description": "Current examination status" },
+        "totalStudents": { "type": "number", "description": "Count of enrolled candidates" },
+        "isPublished": { "type": "boolean", "description": "Whether the exam schedule is published to candidates" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp created" }
+      },
+      "required": ["title", "courseCode", "examDate", "session", "department", "status"]
+    },
+    "Room": {
+      "title": "Room",
+      "description": "Examination hall and seating capacity",
+      "type": "object",
+      "properties": {
+        "roomNumber": { "type": "string", "description": "Hall designation name or number" },
+        "building": { "type": "string", "description": "Campus building name" },
+        "capacity": { "type": "number", "description": "Maximum seating capacity" },
+        "rows": { "type": "number", "description": "Number of bench rows" },
+        "columns": { "type": "number", "description": "Number of bench columns" },
+        "isActive": { "type": "boolean", "description": "Whether the hall is available for allocation" },
+        "inchargeId": { "type": "string", "description": "UID of assigned faculty in-charge" },
+        "inchargeName": { "type": "string", "description": "Name of assigned faculty in-charge" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp created" }
+      },
+      "required": ["roomNumber", "building", "capacity", "rows", "columns", "isActive"]
+    },
+    "Allocation": {
+      "title": "Allocation",
+      "description": "Seat allocation for candidate in examination room",
+      "type": "object",
+      "properties": {
+        "examinationId": { "type": "string", "description": "ID of examination" },
+        "roomId": { "type": "string", "description": "ID of allocated room" },
+        "studentId": { "type": "string", "description": "UID of candidate" },
+        "seatNumber": { "type": "string", "description": "Allocated seat identifier (e.g., A-01)" },
+        "studentName": { "type": "string", "description": "Candidate full name" },
+        "studentRegNo": { "type": "string", "description": "Candidate registration number" },
+        "studentEmail": { "type": "string", "description": "Candidate email address" },
+        "courseCode": { "type": "string", "description": "Course code" },
+        "roomNumber": { "type": "string", "description": "Room designation" },
+        "building": { "type": "string", "description": "Building name" },
+        "examDate": { "type": "string", "description": "Examination date" },
+        "session": { "type": "string", "description": "Examination session" },
+        "isPublished": { "type": "boolean", "description": "Whether schedule is published" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp created" }
+      },
+      "required": ["examinationId", "roomId", "studentId", "seatNumber"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Candidate roll attendance record",
+      "type": "object",
+      "properties": {
+        "allocationId": { "type": "string", "description": "Allocation reference ID" },
+        "examinationId": { "type": "string", "description": "Examination ID" },
+        "studentId": { "type": "string", "description": "Candidate student UID" },
+        "roomId": { "type": "string", "description": "Room ID" },
+        "roomNumber": { "type": "string", "description": "Room number" },
+        "seatNumber": { "type": "string", "description": "Seat number" },
+        "studentName": { "type": "string", "description": "Candidate full name" },
+        "studentRegNo": { "type": "string", "description": "Candidate registration number" },
+        "status": { "type": "string", "enum": ["Present", "Absent", "Pending"], "description": "Attendance status" },
+        "verifiedBy": { "type": "string", "description": "UID of invigilator who verified" },
+        "verifiedByName": { "type": "string", "description": "Name of invigilator" },
+        "verifiedAt": { "type": "string", "format": "date-time", "description": "Timestamp verified" },
+        "remarks": { "type": "string", "description": "Optional notes or medical remarks" },
+        "isFinalized": { "type": "boolean", "description": "Whether attendance is submitted and finalized" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp created" }
+      },
+      "required": ["examinationId", "studentId", "roomId", "status", "isFinalized"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Systemic and administrative activity audit log record",
+      "type": "object",
+      "properties": {
+        "action": { "type": "string", "description": "Action type identifier" },
+        "entityType": { "type": "string", "enum": ["examination", "room", "allocation", "attendance", "system"], "description": "Entity category" },
+        "entityId": { "type": "string", "description": "Target entity identifier" },
+        "performedBy": { "type": "string", "description": "User email or UID who executed the action" },
+        "performedByName": { "type": "string", "description": "Full name of the user" },
+        "details": { "type": "string", "description": "Detailed explanation of changes and old vs new values" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Timestamp of action" }
+      },
+      "required": ["action", "entityType", "performedBy", "details", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User account documents with institutional roles"
+    },
+    "/profiles/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile with role information"
+    },
+    "/departments/{deptId}": {
+      "schema": { "$ref": "#/entities/Department" },
+      "description": "Institutional departments"
+    },
+    "/courses/{courseId}": {
+      "schema": { "$ref": "#/entities/Course" },
+      "description": "Offered curriculum courses"
+    },
+    "/students/{studentId}": {
+      "schema": { "$ref": "#/entities/Student" },
+      "description": "Registered students roster"
+    },
+    "/examinations/{examinationId}": {
+      "schema": { "$ref": "#/entities/Examination" },
+      "description": "Institutional examination papers"
+    },
+    "/rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/Room" },
+      "description": "Examination halls and room capacities"
+    },
+    "/allocations/{allocationId}": {
+      "schema": { "$ref": "#/entities/Allocation" },
+      "description": "Student seating allocations"
+    },
+    "/attendance/{attendanceId}": {
+      "schema": { "$ref": "#/entities/Attendance" },
+      "description": "Student examination attendance records"
+    },
+    "/audit_logs/{auditLogId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Administrative activity and security audit trail"
+    }
+  }
+}

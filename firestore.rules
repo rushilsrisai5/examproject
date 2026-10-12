@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for institutional authentication and Role-Based Access Control (RBAC)
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return isSignedIn() && exists(/databases/$(database)/documents/profiles/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data
+        : (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+            : null);
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'rushilsrisai5@gmail.com' ||
+        (getUserData() != null && getUserData().role == 'admin')
+      );
+    }
+
+    function isIncharge() {
+      return isSignedIn() && (
+        isAdmin() ||
+        (getUserData() != null && getUserData().role == 'incharge')
+      );
+    }
+
+    function isStudent() {
+      return isSignedIn() && (
+        getUserData() != null && getUserData().role == 'student'
+      );
+    }
+
+    // Profiles & Users: Users can read/write their own profiles; Admins have full access
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    match /profiles/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // Student Registry: Authenticated staff can view; Admins manage candidate enrollment
+    match /students/{studentId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Examination Courses & Academic Departments
+    match /departments/{deptId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /courses/{courseId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Examinations: Authenticated users can view schedules; Admins configure papers
+    match /examinations/{examId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Examination Halls & Seating Capacities
+    match /rooms/{roomId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Seating Allocations: Staff can view; Students can view ONLY their own published schedules
+    match /allocations/{allocId} {
+      allow read: if isSignedIn() && (
+        isAdmin() ||
+        isIncharge() ||
+        (resource.data.is_published == true && (
+          resource.data.student_id == request.auth.uid ||
+          (resource.data.student_email != null && resource.data.student_email == request.auth.token.email)
+        ))
+      );
+      allow write: if isAdmin();
+    }
+
+    // Attendance Records: In-Charges and Admins record and correct attendance
+    match /attendance/{attId} {
+      allow read: if isSignedIn() && (isAdmin() || isIncharge());
+      allow create, update: if isSignedIn() && (isAdmin() || isIncharge());
+      allow delete: if isAdmin();
+    }
+
+    // Audit Logs: Immutable log of administrative and invigilation actions
+    match /audit_logs/{logId} {
+      allow read: if isSignedIn() && (isAdmin() || isIncharge());
+      allow create: if isSignedIn();
+      allow update, delete: if false; // Append-only audit integrity
+    }
+
+    // Fallback rule for institutional collections
+    match /{document=**} {
+      allow read, write: if isSignedIn() && isAdmin();
+    }
+  }
+}
